@@ -14,6 +14,10 @@
         <p>Year Established: Natural Formation</p>
         {% endif %}
     </div> 
+    <div class="card-action">
+        <a href="{% url 'places_update' place.id %}">Edit</a>
+        <a href="{% url 'places_delete' place.id %}">Delete</a>
+    </div>
 </div>
 
 {% endblock %}

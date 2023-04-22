@@ -7,7 +7,8 @@
   <a class="card">
     <a href="{% url 'detail' place.id %}">
     <div class="card-content">
-      <span class="card-title">{{ place.name }}</span>
+      <h4><span class="card-title">{{ place.name }}</span></h4>
+    </a>
       <p>Location: {{ place.location }}</p>
       <p>Description: {{ place.description|linebreaks}}</p>
       {% if place.yearBuilt > 0 %}
@@ -16,7 +17,7 @@
       <p>Year Established: Natural formation</p>
       {% endif %}
     </div>
-  </a>
+
   </div>
 {% endfor %}
 

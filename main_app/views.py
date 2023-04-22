@@ -1,7 +1,10 @@
 
 from django.shortcuts import render
-from .models import Place
 
+from django.views.generic.edit import CreateView, UpdateView, DeleteView 
+
+
+from .models import Place
 # Create your views here.
 def home(request):
     return render(request, 'home.html')
@@ -17,3 +20,22 @@ def places_index(request):
 def places_detail(request, place_id):
     place = Place.objects.get(id=place_id)
     return render(request, 'places/detail.html', {'place': place})
+
+class PlaceCreate(CreateView):
+    model = Place
+    fields = '__all__'
+      # Special string pattern Django will use
+    # success_url = '/places/{place_id}' 
+    # # <--- must specify an exact ID
+    # Or..more fitting... you want to just redirect to the index page
+    # success_url = '/places'
+
+class PlaceUpdate(UpdateView):
+    model = Place
+    # Let's disallow the renaming of a cat by excluding the name field!
+    fields = ['location', 'description', 'yearBuilt']
+
+
+class PlaceDelete(DeleteView):
+    model = Place
+    success_url = '/places'
