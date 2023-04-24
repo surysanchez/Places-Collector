@@ -1,23 +1,57 @@
 {% extends 'base.html' %}
-{%block content %}
+ {%block content %}
 
 <h1>Places Detail</h1>
-
-<div class="card">
-    <div class="card-content">
+<div class="row">
+  <div class="col s6">
+    <div class="card">
+      <div class="card-content">
         <span class="card-title">{{ place.name }}</span>
         <p>Location: {{ place.location}}</p>
         <p>Description: {{ place.description }}</p>
         {% if place.yearBuilt > 0 %}
-        <p>Year Established: {{ place.yearBuilt }} </p>
+        <p>Year Established: {{ place.yearBuilt }}</p>
         {% else %}
         <p>Year Established: Natural Formation</p>
         {% endif %}
-    </div> 
-    <div class="card-action">
+      </div>
+      <div class="card-action">
         <a href="{% url 'places_update' place.id %}">Edit</a>
         <a href="{% url 'places_delete' place.id %}">Delete</a>
+      </div>
     </div>
+  </div>
+  <div class="col s6">
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{review_form.as_p }}
+        <input type="submit" class="btn" value="Add Rating">
+    </form>
+    <table class="striped">
+        <thead>
+            <tr><th>Date</th><th>Rating</th></tr>
+        </thead>
+        <tbody>
+            {% for review in place.review_set.all %}
+            <tr>
+                <td>{{review.date}}</td>
+                <td>{{review.get_rating_display}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
 </div>
 
+<script>
+    const dateEl = document.getElementById('id_date');
+    M.Datepicker.init(dateEl, {
+        format: 'yyyy-mm-dd',
+        defaultDate: new Date(),
+        setDefaultDate: true,
+        autoClose: true
+    });
+    const selectEl = document.getElementById('id_rating');
+    M.FormSelect.init(selectEl);
+</script>
 {% endblock %}
