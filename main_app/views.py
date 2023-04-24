@@ -1,5 +1,5 @@
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView 
 
@@ -23,6 +23,14 @@ def places_detail(request, place_id):
     place = Place.objects.get(id=place_id)
     review_form = ReviewForm()
     return render(request, 'places/detail.html', {'place': place, 'review_form': review_form})
+
+def add_review(request, place_id):
+    form = ReviewForm(request.POST)
+    if form.is_valid():
+        new_review = form.save(commit=False)
+        new_review.place_id = place_id
+        new_review.save()
+        return redirect('detail', place_id=place_id)
 
 class PlaceCreate(CreateView):
     model = Place
