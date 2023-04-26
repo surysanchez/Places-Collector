@@ -2,15 +2,14 @@
 from django.shortcuts import render, redirect
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView 
-
-from .models import Place
+from django.views.generic import ListView, DetailView
+from .models import Place , Attraction
 from .forms import ReviewForm
 
 
 # Create your views here.
 def home(request):
     return render(request, 'home.html')
-
 
 def about(request):
     return render(request, 'about.html')
@@ -21,25 +20,15 @@ def places_index(request):
 
 def places_detail(request, place_id):
     place = Place.objects.get(id=place_id)
+    id_list = place.attractions.all().values_list('id')
+    attractions_place_doesnt_have = Attraction.objects.exclude(id__in=id_list)
     review_form = ReviewForm()
-    return render(request, 'places/detail.html', {'place': place, 'review_form': review_form})
-
-def add_review(request, place_id):
-    form = ReviewForm(request.POST)
-    if form.is_valid():
-        new_review = form.save(commit=False)
-        new_review.place_id = place_id
-        new_review.save()
-        return redirect('detail', place_id=place_id)
+    return render(request, 'places/detail.html', {'place': place, 'review_form': review_form, 'attractions': attractions_place_doesnt_have})
 
 class PlaceCreate(CreateView):
     model = Place
-    fields = '__all__'
-      # Special string pattern Django will use
-    # success_url = '/places/{place_id}' 
-    # # <--- must specify an exact ID
-    # Or..more fitting... you want to just redirect to the index page
-    # success_url = '/places'
+    fields = ['name','location', 'description', 'yearBuilt']
+
 
 class PlaceUpdate(UpdateView):
     model = Place
@@ -50,3 +39,40 @@ class PlaceUpdate(UpdateView):
 class PlaceDelete(DeleteView):
     model = Place
     success_url = '/places'
+
+
+def add_review(request, place_id):
+    form = ReviewForm(request.POST)
+    if form.is_valid():
+        new_review = form.save(commit=False)
+        new_review.place_id = place_id
+        new_review.save()
+        return redirect('detail', place_id=place_id)
+
+
+
+class AttractionList(ListView):
+    model = Attraction
+
+class Attraction(DetailView):
+    model = Attraction
+
+class AttractionCreate(CreateView):
+    model = Attraction
+    fields = '__all__'
+
+class AttractionUpdate(UpdateView):
+    model = Attraction
+    fields = ['name', 'description']
+
+class AttractionDelete(DeleteView):
+    model = Attraction
+    success_url = '/attractions'
+
+def assoc_attraction(request, place_id, attraction_id):
+    Place.objects.get(id=place_id).attractions.add(attraction_id)
+    return redirect('detail', place_id=place_id)
+
+def unassoc_attraction(request, place_id, attraction_id):
+    Place.objects.get(id=place_id).attractions.remove(attraction_id)
+    return redirect('detail', place_id=place_id)
