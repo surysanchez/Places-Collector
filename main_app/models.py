@@ -30,16 +30,19 @@ class Attraction(models.Model):
     # type = models.CharField(max_length=1, choices=TYPES, default=TYPES[0][0])
     description = models.TextField(max_length=250)
 
+    # place = models.ForeignKey(Place, on_delete=models.CASCADE)
+
 
     def __str__(self):
         return self.name
         # return f"{self.get_type_display()}"
     
     def get_absolute_url(self):
-        return reverse('attractions_detail', kwargs={'pk': self.id})
+        return reverse('places_detail', kwargs={'pk': self.id})
     
-
-
+    # class Meta:
+    #     ordering = ('name',)
+    
 
 class Place(models.Model):
     name = models.CharField(max_length=100)
@@ -48,6 +51,7 @@ class Place(models.Model):
     yearBuilt = models.IntegerField()
      # Add the M:M relationship
     attractions = models.ManyToManyField(Attraction)
+    primary_key=True
 
     def review_for_today(self):
         return self.review_set.filter(date=date.today()).count() >= 1
@@ -57,10 +61,11 @@ class Place(models.Model):
     
     
     def get_absolute_url(self):
-        return reverse('detail', kwargs={'place_id': self.id})
+        return reverse('places_detail', kwargs={'place_id': self.id})
     
 
 class Review(models.Model):
+    
     date = models.DateField('review date')
     rating = models.CharField(max_length=1, choices=RATINGS, default=RATINGS[0][0]) 
 

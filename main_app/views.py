@@ -21,14 +21,13 @@ def places_index(request):
 def places_detail(request, place_id):
     place = Place.objects.get(id=place_id)
     id_list = place.attractions.all().values_list('id')
-    attractions_place_doesnt_have = Attraction.objects.exclude(id__in=id_list)
+    attractions_place_doesnt_have = Place.objects.exclude(id__in=id_list)
     review_form = ReviewForm()
     return render(request, 'places/detail.html', {'place': place, 'review_form': review_form, 'attractions': attractions_place_doesnt_have})
 
 class PlaceCreate(CreateView):
     model = Place
     fields = ['name','location', 'description', 'yearBuilt']
-
 
 class PlaceUpdate(UpdateView):
     model = Place
@@ -47,14 +46,13 @@ def add_review(request, place_id):
         new_review = form.save(commit=False)
         new_review.place_id = place_id
         new_review.save()
-        return redirect('detail', place_id=place_id)
-
+        return redirect('places_detail', place_id=place_id)
 
 
 class AttractionList(ListView):
     model = Attraction
 
-class Attraction(DetailView):
+class AttractionDetail(DetailView):
     model = Attraction
 
 class AttractionCreate(CreateView):
@@ -71,8 +69,8 @@ class AttractionDelete(DeleteView):
 
 def assoc_attraction(request, place_id, attraction_id):
     Place.objects.get(id=place_id).attractions.add(attraction_id)
-    return redirect('detail', place_id=place_id)
+    return redirect('places_detail', place_id=place_id)
 
 def unassoc_attraction(request, place_id, attraction_id):
     Place.objects.get(id=place_id).attractions.remove(attraction_id)
-    return redirect('detail', place_id=place_id)
+    return redirect('places_detail', place_id=place_id)

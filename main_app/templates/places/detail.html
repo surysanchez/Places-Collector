@@ -67,8 +67,9 @@
         <div class="card-action">
           <form action="{% url 'unassoc_attraction' place.id attraction.id %}" method="POST">
             {% csrf_token %}
-          <button type="submit" class="btn">Remove</button>
-        </form>
+            <button type="submit" class="btn">Remove</button>
+          </form>
+        </div>
         </div>
       </div>
       {% endfor %}
@@ -83,7 +84,6 @@
         <div class="card">
           <div class="card-content">
             <span class="card-title"></span>
-
             <span>{{attraction.name}}</span>
             <span>{{attraction.description}}</span>
             <!-- <span>{{attraction.get_type_display}}</span> -->
