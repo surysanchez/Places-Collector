@@ -40,8 +40,10 @@ class Attraction(models.Model):
     def get_absolute_url(self):
         return reverse('attractions_detail', kwargs={'pk': self.id})
     
-  
+    # class Meta:
+    #     ordering = ('name',)
     
+
 class Place(models.Model):
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
